@@ -1,3 +1,6 @@
+const mongoose = require('mongoose')
+const isEmail = require('validator/lib/isEmail')
+
 const userSchema = new mongoose.Schema({
     name: {
         type: String, // type of data, when we type the  number, it will be converted into strings
@@ -55,3 +58,7 @@ const userSchema = new mongoose.Schema({
 }, {
     timestamps: true 
 })
+
+const User = mongoose.model('User', userSchema)
+
+module.exports = User
