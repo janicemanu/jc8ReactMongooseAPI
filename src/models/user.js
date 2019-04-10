@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const isEmail = require('validator/lib/isEmail')
+const bcrypt = require('bcrypt')
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -57,6 +58,26 @@ const userSchema = new mongoose.Schema({
     }]
 }, {
     timestamps: true 
+})
+
+// userSchema.statics.findByCredentials = async (email, password) => { // Model function
+//     // mencari by email
+//     const user = await User.findOne({ email })
+
+//     if(!user){
+//         throw new Error("Unable to login")
+//     }
+//     // compare password
+
+// }
+
+userSchema.pre('save', async function(next) {
+    const user = this // akses ke user {name, age, email, password}
+
+    user.password = await bcrypt.hash(user.password, 8)
+
+    next()
+
 })
 
 const User = mongoose.model('User', userSchema)

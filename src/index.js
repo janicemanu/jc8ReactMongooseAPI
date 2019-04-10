@@ -9,17 +9,27 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 
-app.post('/users', async (req, res) => {
-    const user = new User(req.body)
+app.post('/users', async (req, res) => { // Register user
+    const user = new User(req.body) // create user
 
     try {
-        await user.save()
-        res.status(200).send(user)
+        await user.save() // save user
+        res.status(201).send(user)
     } catch (e) {
-        res.status(400).send(e)
+        res.status(404).send(e.message)
     }
 })
 
+app.post('/users/login', async (req, res) => {
+    const {email, password} = req.body
+
+    try {
+        const user = await User.findByCredentials(email, password) // Function buatan sendiri
+        res.status(200).send(user)
+    } catch (e) {
+        res.status(404).send(e)
+    }
+})
 
 
 
