@@ -27,7 +27,7 @@ app.post('/users/login', async (req, res) => {
         const user = await User.findByCredentials(email, password) // Function buatan sendiri
         res.status(200).send(user)
     } catch (e) {
-        res.status(404).send(e)
+        res.status(201).send(e)
     }
 })
 
