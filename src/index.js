@@ -32,7 +32,7 @@ app.post('/users/login', async (req, res) => {// Login user
     }
 })
 
-app.post('/tasks/:userid', async (req, res) => {
+app.post('/tasks/:userid', async (req, res) => { // Create tasks by user id
     try {
         const user = await User.findById(req.params.userid) // search user by id
         if(!user){ // jika user tidak ditemukan
@@ -48,7 +48,16 @@ app.post('/tasks/:userid', async (req, res) => {
     }
 })
 
-
+app.get('/tasks/:userid', async (req, res) => {
+    try {
+        // find mengirim dalam bentuk array
+       const user = await User.find({_id: req.params.userid})
+                    .populate({path:'tasks'}).exec()
+        res.send(user[0].tasks)
+    } catch (e) {
+        
+    }
+})
 
 
 
