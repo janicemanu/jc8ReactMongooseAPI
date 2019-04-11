@@ -48,7 +48,7 @@ app.post('/tasks/:userid', async (req, res) => { // Create tasks by user id
     }
 })
 
-app.get('/tasks/:userid', async (req, res) => {
+app.get('/tasks/:userid', async (req, res) => { // Get own tasks
     try {
         // find mengirim dalam bentuk array
        const user = await User.find({_id: req.params.userid})
@@ -59,6 +59,19 @@ app.get('/tasks/:userid', async (req, res) => {
     }
 })
 
+app.delete('/tasks', async (req, res) => {
+    try {
+        const task = await Task.findOneAndDelete({_id: req.body.id})
+
+        if(!task){
+            return res.status(404).send("Delete failed")
+        }
+
+        res.status(200).send(task)
+    } catch (e) {
+        res.status(500).send(e)
+    }
+})
 
 
 
