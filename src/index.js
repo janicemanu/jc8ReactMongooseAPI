@@ -59,7 +59,7 @@ app.get('/tasks/:userid', async (req, res) => { // Get own tasks
     }
 })
 
-app.delete('/tasks', async (req, res) => {
+app.delete('/tasks', async (req, res) => { // Delete task
     try {
         const task = await Task.findOneAndDelete({_id: req.body.id})
 
@@ -72,6 +72,47 @@ app.delete('/tasks', async (req, res) => {
         res.status(500).send(e)
     }
 })
+
+app.patch('/tasks/:taskid/:userid', async (req, res) => {
+    const updates = Object.keys(req.body)
+    const allowedUpdates = ['description', 'completed']
+    const isValidOperation = updates.every(update => allowedUpdates.includes(update))
+
+    if(!isValidOperation) {
+        return res.status(400).send({err: "Invalid request!"})
+    }
+
+    try {
+        const task = await Task.findOne({_id: req.params.taskid, owner: req.params.userid})
+        
+        if(!task){
+            return res.status(404).send("Update Request")
+        }
+        
+        updates.forEach(update => task[update] = req.body[update])
+        await task.save()
+        
+        res.send("update berhasil")
+        
+        
+    } catch (e) {
+        
+    }
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
