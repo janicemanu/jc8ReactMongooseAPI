@@ -134,7 +134,7 @@ app.post('/users/:userid/avatar', upload.single('avatar'), async (req, res) => {
     }
 })
 
-app.get('/users/:userid/avatar', async (req, res) => {
+app.get('/users/:userid/avatar', async (req, res) => { // Get image, source gambar
     try {
         const user = await User.findById(req.params.userid)
 
