@@ -1,6 +1,8 @@
 const express  = require('express')
 const port = require('./config')
 const cors = require('cors')
+const multer = require('multer')
+const sharp = require('sharp')
 const User = require('./models/user')
 const Task = require('./models/task')
 require('./config/mongose')
@@ -73,7 +75,7 @@ app.delete('/tasks', async (req, res) => { // Delete task
     }
 })
 
-app.patch('/tasks/:taskid/:userid', async (req, res) => {
+app.patch('/tasks/:taskid/:userid', async (req, res) => { // Edit Task
     const updates = Object.keys(req.body)
     const allowedUpdates = ['description', 'completed']
     const isValidOperation = updates.every(update => allowedUpdates.includes(update))
@@ -99,6 +101,91 @@ app.patch('/tasks/:taskid/:userid', async (req, res) => {
         
     }
 })
+
+const upload = multer({
+    limits: {
+        fileSize: 1000000 // Byte max size
+    },
+    fileFilter(req, file, cb){                                 
+        if(!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+            // throw error
+            return cb(new Error('Please upload image file (jpg, jpeg, png)'))
+        }
+
+        // diterima
+        cb(undefined, true)
+    }
+})
+
+app.post('/users/:userid/avatar', upload.single('avatar'), async (req, res) => { // Post Image
+    try {
+        const buffer = await sharp(req.file.buffer).resize({ width: 250 }).png().toBuffer()
+        const user = await User.findById(req.params.userid)
+        
+        if(!user) {
+            throw new Error("Unable to upload")
+        }
+
+        user.avatar = buffer
+        await user.save()
+        res.send("Upload Success !")
+    } catch (e) {
+        res.send(e)
+    }
+})
+
+app.get('/users/:userid/avatar', async (req, res) => {
+    try {
+        const user = await User.findById(req.params.userid)
+
+        if(!user || !user.avatar){
+            throw new Error("Not found")
+        }
+
+        res.set('Content-Type', 'image/png')
+        res.send(user.avatar)
+    } catch (e) {
+        res.send(e)
+    }
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Tugas
+
+// Back End
+// 1. Update profile
+// 2. Update tasks field when task deleted (filtering)
+// 3. Delete avatar
+// 4. Delete user
+// 5. Delete all tasks when user deleted
+// 6. Get own task, tambahkan fitur Sorting, Match, limit. (populate) 
+
+// Front End
+// Buat front end untuk semua fitur yang sudah dijelaskan plus yang menjadi tugas back end
+
+
 
 
 
