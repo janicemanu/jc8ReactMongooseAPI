@@ -149,6 +149,17 @@ app.get('/users/:userid/avatar', async (req, res) => { // Get image, source gamb
     }
 })
 
+app.get('/users/me/:userid', async (req, res) => { // READ PROFILE, untuk Profile.js
+    try {
+       const user = await User.findById(req.params.userid)
+       res.send({
+            photo: `http://localhost:2009/users/${user._id}/avatar`,
+            user: user
+       })
+    } catch (e) {
+        res.send(e)
+    }
+})
 
 
 
@@ -159,31 +170,14 @@ app.get('/users/:userid/avatar', async (req, res) => { // Get image, source gamb
 
 
 
+app.post('/editprofile/:userid', upload.single('avatar'),async (req, res) => { // Update Profile
+    
+
+
+})
 
 
 
-
-
-
-
-
-
-
-
-
-
-// Tugas
-
-// Back End
-// 1. Update profile
-// 2. Update tasks field when task deleted (filtering)
-// 3. Delete avatar
-// 4. Delete user
-// 5. Delete all tasks when user deleted
-// 6. Get own task, tambahkan fitur Sorting, Match, limit. (populate) 
-
-// Front End
-// Buat front end untuk semua fitur yang sudah dijelaskan plus yang menjadi tugas back end
 
 
 
